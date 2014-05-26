@@ -4,6 +4,7 @@ numpty-physics
 ## Team Details
 
 * Karthikeya Viswanath - 8122219842 - viswanathkarthikeya@gmail.com
+* A V Susmitha         - 9703755629 -sush02a@gmail.com
 
 
 
