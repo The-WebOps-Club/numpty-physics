@@ -1,0 +1,56 @@
+<DOCTYPE html>
+<html>
+<head>
+<script src="scripts/physicsjs/physicsjs-VER.min.js"></script>
+
+<script>
+Physics(function(world){
+	var circle = Physics.body('circle',{
+		x:30,
+		y:30,
+		vx:0,
+		vy:0,
+		radius 15, 
+	});
+	world.add(circle);
+	var gravity = Physics.behavior('constant-acceleration',{
+		acc:{ x:0,y:0.0004}
+	});
+	world.add(gravity);
+	var renderer=Physics.renderer('canvas',{
+		el:'viewport',
+		width: 500,
+		height: 300,
+		meta: false,
+		styles:{
+		strokeStyle:hsla(60,37%,20%1)',
+		lineWidth:1,
+		fillStyle:'hsla(60,37%17%0.4),
+			}
+	}
+
+	);
+	world.add(renderer);
+	world.on('step',function(){
+	world.render();
+	}
+	var viewportBounds = Physics.aabb(0,0,500,300);
+	world.add(Physics.behavior('edge-collision-detection',{
+		aabb: viewportbounds,
+		restitution: 0;
+		cof:0 ;
+	})));
+	Physics({
+	integrator: 'verlet'
+	});
+Physics.util.ticker.on(function(time,dt){
+world.step(time);
+});
+Physics.util.ticker.start();	
+});
+</script>
+</head>
+<body>
+<div id="viewport">
+</div>
+</html>
