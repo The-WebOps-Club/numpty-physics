@@ -7,10 +7,11 @@
         <script type="text/javascript" src="embox2d-html5canvas-debugDraw.js"></script>
         <script type="text/javascript" src="embox2d-html5canvas-testbed.js"></script>
         <script type="text/javascript" src="fallingBalls.js"></script>
-     
-        <script>
-		//var Module={TOTAL_MEMORY:256*1024*1024}</script>
+        <script type="text/javascript" src="joints.js"></script>
+		<!--<script type='text/javascript' src='sliders.js'></script>-->
+		
         <script type="text/javascript">
+		//console.log(canvas)
 		//var Module={TOTAL_MEMORY : 256*1024*1024};
             window.onload = function() {
                 using(Box2D, "b2.+")
@@ -35,7 +36,7 @@
             
                 <!--<canvas id="canvas" width="480" height="320" tabindex='1'></canvas>-->
                 <canvas id="canvas" width="1200" height="600" tabindex='1'></canvas>
-                <div style="width:636px;padding:2px;background-color:#ddd">
+                <div style="width:1196px;padding:2px;background-color:rgba(128,256,128,0.1)">
                 <div style="text-align:center">
                     <button id="reloadButton" onclick="resetScene();">Reset</button>
                     <button id="pauseButton" onclick="pause();">Pause</button>
@@ -49,22 +50,34 @@
                     You need to click on the canvas before using the keyboard.<br>
                     <br>
                     Test: <select id="testSelection" onchange="changeTest();">
-					    <option value="embox2dTest_fallingBalls">fallingBalls</option>						
+					    <option value="embox2dTest_joints">joints</option>
+						<option value="embox2dTest_fallingBalls">fallingBalls</option>
+                        						
                     </select>
                 </div>
                 <br>
                     
                 Debug draw flags:<br>
-                <input id="drawShapesCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Shapes<br>
-                <input id="drawJointsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Joints<br>
-                <input id="drawAABBsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">AABBs<br>
-                <!--<input id="drawPairsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Pairs<br>-->
-                <input id="drawTransformsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Transforms<br>
+				<div>
+					<input id="drawShapesCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Shapes<br>
+					<input id="drawJointsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Joints<br>
+					<input id="drawAABBsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">AABBs<br>
+					<!--<input id="drawPairsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Pairs<br>-->
+					<input id="drawTransformsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Transforms<br>
+				</div>
+				<div style='left :-300px;top :-150px;position:relative;text-align :right'>
+					<h1><em>controls:</h1></em><br>
+					<b>body1</b><br>
+					<i>Torque</i><input id='torque1' type='range' max='1000' min='0' value='100'></input>
+						<span id='Torque1Display'></span><br>
+				    <i>Velocity</i><input id='speed1' type='range' max='60' min='0' value='10'></input>
+						<span></span><br></div>
                 <br>
               
                 <input id="showStatsCheck" type="checkbox" onclick="updateContinuousRefreshStatus();">Show stats<br>
 				<div style='left : 100px; top :200px'>
-                <span id="feedbackSpan"></span></div>
+					<span id="feedbackSpan"></span>
+				</div>
                 <br>
                 </div>
             </div>        

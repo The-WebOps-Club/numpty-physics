@@ -18,8 +18,9 @@ function setColorFromDebugDrawCallback(color) {
     var green = (col.get_g() * 255)|0;
     var blue = (col.get_b() * 255)|0;
     var colStr = red+","+green+","+blue;
-    context.fillStyle = "rgba("+colStr+",0.5)";
-    context.strokeStyle = "rgb("+colStr+")";
+    context.fillStyle ="rgba("+colStr+",0.5)";
+    context.strokeStyle = "rgb("+colStr+")"; 
+	//console.log(eval(context.fillStyle));
 }
 
 function drawSegment(vert1, vert2) {
@@ -42,19 +43,28 @@ function drawPolygon(vertices, vertexCount, fill) {
     }
     context.closePath();
     if (fill)
+	    {
+		context.fillStyle='rgb(128,200,0)';
         context.fill();
+		}
     context.stroke();
 }
 
 function drawCircle(center, radius, axis, fill) {                    
     var centerV = Box2D.wrapPointer(center, b2Vec2);
     var axisV = Box2D.wrapPointer(axis, b2Vec2);
+    //console.log(centerV.get_x());
     
-    context.beginPath();
+	context.beginPath();
     context.arc(centerV.get_x(),centerV.get_y(), radius, 0, 2 * Math.PI, false);
+	context.fillStyle='rgb(128,255,255)';
+	//console.log(this);
     if (fill)
-        context.fill();
-    context.stroke();
+        {
+		 context.fill();
+         //console.log(context.fillStyle);
+        }		 
+ context.stroke();
     
     if (fill) {
         //render axis marker
@@ -66,7 +76,7 @@ function drawCircle(center, radius, axis, fill) {
         context.stroke();
     }
 }
-
+ 
 function drawTransform(transform) {
     var trans = Box2D.wrapPointer(transform,b2Transform);
     var pos = trans.get_p();
@@ -81,15 +91,26 @@ function drawTransform(transform) {
     context.restore();
 }
 
+function drawCenterMarker(center,radius){
+	var centerV=Box2D.wrapPointer(center,b2Vec2);
+	context.save();
+	context.translate(centerV.get_x(),centerV.get_y());
+	context.beginPath();
+	context.arc(0,0,(radius*2)/PTM,0,2*Math.PI,true);
+    context.fillStyle='rgb(256,0,0)';
+	context.fill();
+	context.stroke();
+	context.restore();
+	}
 function getCanvasDebugDraw() {
-    var debugDraw = new Box2D.b2Draw();
-            
+    var debugDraw = new Box2D.b2Draw();   
     Box2D.customizeVTable(debugDraw, [{
     original: Box2D.b2Draw.prototype.DrawSegment,
     replacement:
         function(ths, vert1, vert2, color) {                    
-            setColorFromDebugDrawCallback(color);                    
-            drawSegment(vert1, vert2);
+            //setColorFromDebugDrawCallback(color);                    
+            //console.log(1);           
+		   drawSegment(vert1, vert2);
         }
     }]);
     
@@ -97,7 +118,7 @@ function getCanvasDebugDraw() {
     original: Box2D.b2Draw.prototype.DrawPolygon,
     replacement:
         function(ths, vertices, vertexCount, color) {                    
-            setColorFromDebugDrawCallback(color);
+            //setColorFromDebugDrawCallback(color);
             drawPolygon(vertices, vertexCount, false);                    
         }
     }]);
@@ -106,8 +127,9 @@ function getCanvasDebugDraw() {
     original: Box2D.b2Draw.prototype.DrawSolidPolygon,
     replacement:
         function(ths, vertices, vertexCount, color) {                    
-            setColorFromDebugDrawCallback(color);
-            drawPolygon(vertices, vertexCount, true);                    
+            //setColorFromDebugDrawCallback(color);
+            drawPolygon(vertices, vertexCount, true);
+            //drawCenterMarker();			
         }
     }]);
     
@@ -115,7 +137,7 @@ function getCanvasDebugDraw() {
     original: Box2D.b2Draw.prototype.DrawCircle,
     replacement:
         function(ths, center, radius, color) {                    
-            setColorFromDebugDrawCallback(color);
+            //setColorFromDebugDrawCallback(color);
             var dummyAxis = b2Vec2(0,0);
             drawCircle(center, radius, dummyAxis, false);
         }
@@ -125,8 +147,12 @@ function getCanvasDebugDraw() {
     original: Box2D.b2Draw.prototype.DrawSolidCircle,
     replacement:
         function(ths, center, radius, axis, color) {                    
-            setColorFromDebugDrawCallback(color);
+            //setColorFromDebugDrawCallback(color);
+			a=Box2D.wrapPointer(ths,b2Body);
+			//console.log(a.GetWorldCenter().get_x());
+			//console.log(a.GetUserData());
             drawCircle(center, radius, axis, true);
+			drawCenterMarker(center,radius);
         }
     }]);
     
@@ -139,4 +165,5 @@ function getCanvasDebugDraw() {
     }]);
     
     return debugDraw;
+	console.log(debugDraw);
 }

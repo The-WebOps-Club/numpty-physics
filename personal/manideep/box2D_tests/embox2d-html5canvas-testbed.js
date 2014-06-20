@@ -1,5 +1,5 @@
 
-var PTM = 32;
+var PTM = 30;
 
 var world = null;
 var mouseJointGroundBody;
@@ -236,10 +236,9 @@ function updateContinuousRefreshStatus() {
 }
 
 function init() {
-    
     canvas = document.getElementById("canvas");
     context = canvas.getContext( '2d' );
-    
+  
     canvasOffset.x = canvas.width/2;
     canvasOffset.y = canvas.height/2;
     
@@ -269,7 +268,6 @@ function init() {
     
     myDebugDraw = getCanvasDebugDraw();            
     myDebugDraw.SetFlags(e_shapeBit);
-    
     myQueryCallback = new b2QueryCallback();
     
     Box2D.customizeVTable(myQueryCallback, [{
@@ -305,7 +303,8 @@ function createWorld() {
         
     world = new b2World( new b2Vec2(0.0, -10.0) );
     world.SetDebugDraw(myDebugDraw);
-    
+	//var ran=Box2D.wrapPointer(myDebugDraw,b2Draw);
+    //console.log(ran);
     mouseJointGroundBody = world.CreateBody( new b2BodyDef() );
     
     var e = document.getElementById("testSelection");
@@ -357,9 +356,9 @@ function draw() {
         context.scale(PTM,PTM);
         context.lineWidth /= PTM;
         
-        drawAxes(context);
+        //drawAxes(context);
         
-        context.fillStyle = 'rgb(255,255,0)';
+        context.fillStyle = 'rgb(255,0,0)';
         world.DrawDebugData();
         
         if ( mouseJoint != null ) {
