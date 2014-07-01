@@ -20,20 +20,24 @@ function setColorFromDebugDrawCallback(color) {
     var colStr = red+","+green+","+blue;
     context.fillStyle ="rgba("+colStr+",0.5)";
     context.strokeStyle = "rgb("+colStr+")"; 
-	//console.log(eval(context.fillStyle));
 }
 
 function drawSegment(vert1, vert2) {
     var vert1V = Box2D.wrapPointer(vert1, b2Vec2);
-    var vert2V = Box2D.wrapPointer(vert2, b2Vec2);                    
+    var vert2V = Box2D.wrapPointer(vert2, b2Vec2); 
+    context.save();	
     context.beginPath();
     context.moveTo(vert1V.get_x(),vert1V.get_y());
     context.lineTo(vert2V.get_x(),vert2V.get_y());
+	context.strokeStyle="green";
+	//console.log('entered');
     context.stroke();
+	context.restore();
 }
 
 function drawPolygon(vertices, vertexCount, fill) {
     context.beginPath();
+	context.save();
     for(tmpI=0;tmpI<vertexCount;tmpI++) {
         var vert = Box2D.wrapPointer(vertices+(tmpI*8), b2Vec2);
         if ( tmpI == 0 )
@@ -44,17 +48,18 @@ function drawPolygon(vertices, vertexCount, fill) {
     context.closePath();
     if (fill)
 	    {
-		context.fillStyle='rgb(128,200,0)';
+		context.fillStyle='rgb(255,0,0)';
         context.fill();
 		}
+		context.strokeStyle="darksalmon";
     context.stroke();
+	context.restore();
 }
 
 function drawCircle(center, radius, axis, fill) {                    
     var centerV = Box2D.wrapPointer(center, b2Vec2);
     var axisV = Box2D.wrapPointer(axis, b2Vec2);
-    //console.log(centerV.get_x());
-    
+    context.save();
 	context.beginPath();
     context.arc(centerV.get_x(),centerV.get_y(), radius, 0, 2 * Math.PI, false);
 	context.fillStyle='rgb(128,255,255)';
@@ -63,8 +68,9 @@ function drawCircle(center, radius, axis, fill) {
         {
 		 context.fill();
          //console.log(context.fillStyle);
-        }		 
- context.stroke();
+        }
+	context.strokeStyle='black';	
+	context.stroke();
     
     if (fill) {
         //render axis marker
@@ -75,6 +81,7 @@ function drawCircle(center, radius, axis, fill) {
         context.lineTo(vert2V.get_x(),vert2V.get_y());
         context.stroke();
     }
+	context.restore();
 }
  
 function drawTransform(transform) {
@@ -96,8 +103,8 @@ function drawCenterMarker(center,radius){
 	context.save();
 	context.translate(centerV.get_x(),centerV.get_y());
 	context.beginPath();
-	context.arc(0,0,(radius*2)/PTM,0,2*Math.PI,true);
-    context.fillStyle='rgb(256,0,0)';
+	context.arc(0,0,(radius*3)/PTM,0,2*Math.PI,true);
+    context.fillStyle='rgb(255,0,0)';
 	context.fill();
 	context.stroke();
 	context.restore();
@@ -108,8 +115,7 @@ function getCanvasDebugDraw() {
     original: Box2D.b2Draw.prototype.DrawSegment,
     replacement:
         function(ths, vert1, vert2, color) {                    
-            //setColorFromDebugDrawCallback(color);                    
-            //console.log(1);           
+            //setColorFromDebugDrawCallback(color);                               
 		   drawSegment(vert1, vert2);
         }
     }]);
@@ -119,7 +125,7 @@ function getCanvasDebugDraw() {
     replacement:
         function(ths, vertices, vertexCount, color) {                    
             //setColorFromDebugDrawCallback(color);
-            drawPolygon(vertices, vertexCount, false);                    
+            drawPolygon(vertices, vertexCount, false); 			
         }
     }]);
     
@@ -148,8 +154,9 @@ function getCanvasDebugDraw() {
     replacement:
         function(ths, center, radius, axis, color) {                    
             //setColorFromDebugDrawCallback(color);
-			a=Box2D.wrapPointer(ths,b2Body);
-			//console.log(a.GetWorldCenter().get_x());
+			pointer=Box2D.wrapPointer(ths,b2Body);
+			//console.log(pointer.GetPosition().get_x());
+			//console.log("angle : "+a.GetAngle()+";x :"+a.GetPosition().get_x()+";y : "+a.GetPosition().get_y()+"type : "+a.GetType());
 			//console.log(a.GetUserData());
             drawCircle(center, radius, axis, true);
 			drawCenterMarker(center,radius);
@@ -165,5 +172,4 @@ function getCanvasDebugDraw() {
     }]);
     
     return debugDraw;
-	console.log(debugDraw);
 }

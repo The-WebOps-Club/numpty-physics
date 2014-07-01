@@ -22,7 +22,6 @@ embox2dTest_fallingBalls.prototype.setup = function() {
 		fixture.set_shape(shape);
 		fixture.set_restitution(1/Math.sqrt(2));
 		fixture.set_density(10);
-		var colour=new b2Color();
 	ground.CreateFixture(fixture);
 	canvas.onclick=function(){
 		worldX=mousePosWorld.x;
@@ -47,9 +46,10 @@ embox2dTest_fallingBalls.prototype.step = function() {
     //this function will be called at the beginning of every time step
 	
 	  if(fallingBall!=null)
-		{    //console.log(fallingBall);
-	         //if(Math.abs(fallingBall.GetPosition().get_x())>canvas.width/(2*PTM))
-			// world.DestroyBody(fallingBall);
+		{    console.log(fallingBall);
+	         if(Math.abs(fallingBall.GetPosition().get_x())>canvas.width/(2*PTM))
+			 world.DestroyBody(fallingBall);
+			 fallingBall=null;
         }
     }
 embox2dTest_fallingBalls.prototype.onKeyDown = function(canvas, evt) {

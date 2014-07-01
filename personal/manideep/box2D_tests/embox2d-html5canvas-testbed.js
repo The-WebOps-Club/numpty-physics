@@ -1,6 +1,6 @@
 
 var PTM = 30;
-
+//var fallingBall;
 var world = null;
 var mouseJointGroundBody;
 var canvas;
@@ -236,9 +236,9 @@ function updateContinuousRefreshStatus() {
 }
 
 function init() {
+    
     canvas = document.getElementById("canvas");
     context = canvas.getContext( '2d' );
-  
     canvasOffset.x = canvas.width/2;
     canvasOffset.y = canvas.height/2;
     
@@ -268,6 +268,7 @@ function init() {
     
     myDebugDraw = getCanvasDebugDraw();            
     myDebugDraw.SetFlags(e_shapeBit);
+    
     myQueryCallback = new b2QueryCallback();
     
     Box2D.customizeVTable(myQueryCallback, [{
@@ -289,7 +290,7 @@ function init() {
 function changeTest() {    
     resetScene();
     if ( currentTest && currentTest.setNiceViewCenter )
-	   { //console.log(currentTest /*&& currentTest.setNiceViewCenter*/);
+	   {
         currentTest.setNiceViewCenter();
 	   }
     updateDebugDrawCheckboxesFromWorld();
@@ -303,8 +304,7 @@ function createWorld() {
         
     world = new b2World( new b2Vec2(0.0, -10.0) );
     world.SetDebugDraw(myDebugDraw);
-	//var ran=Box2D.wrapPointer(myDebugDraw,b2Draw);
-    //console.log(ran);
+    
     mouseJointGroundBody = world.CreateBody( new b2BodyDef() );
     
     var e = document.getElementById("testSelection");
@@ -346,8 +346,8 @@ function step(timestamp) {
 
 function draw() {
     
-    //black background
-    context.fillStyle = 'rgb(0,0,0)';
+    //light background
+    context.fillStyle = 'rgb(0,10,0,)';
     context.fillRect( 0, 0, canvas.width, canvas.height );
     
     context.save();            
@@ -355,10 +355,10 @@ function draw() {
         context.scale(1,-1);                
         context.scale(PTM,PTM);
         context.lineWidth /= PTM;
-        
+        //drawSprites();
         //drawAxes(context);
         
-        context.fillStyle = 'rgb(255,0,0)';
+        context.fillStyle = 'rgb(255,255,0)';
         world.DrawDebugData();
         
         if ( mouseJoint != null ) {
@@ -404,7 +404,7 @@ window.requestAnimFrame = (function(){
 
 function animate() {
     if ( run )
-        requestAnimFrame( animate );
+        requestAnimationFrame( animate );
     step();
 }
 
