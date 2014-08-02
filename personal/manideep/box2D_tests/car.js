@@ -16,9 +16,6 @@ embox2dTest_joints.prototype.setup = function() {
 	
 	{
 	 var body=new b2BodyDef();
-	/* body.set_position(new b2Vec2(0,0));
-	 body.set_angle(0);
-	 body.set_type(b2_staticBody);*/
 	 ground=world.CreateBody(body);
 	 var path=new b2Vec2(0,0);
 	 var groundverts=[new b2Vec2(-19,20),new b2Vec2(-19,0),new b2Vec2(19,0),new b2Vec2(19,20)];
@@ -57,7 +54,10 @@ embox2dTest_joints.prototype.setup = function() {
 	wheelbody2.userData={
 	                     id : "wheel2"
 						 };
+	console.log(wheelbody2);
+	console.log(wheelbody1);
 	shape=new b2CircleShape();
+	
 	shape.set_m_radius(0.5);
 	
 	fixture=new b2FixtureDef();
@@ -79,7 +79,7 @@ embox2dTest_joints.prototype.setup = function() {
 	 shape=new createPolygonShape(carVerts);
 	 for(var j=0;j<carVerts.length;j++)
 	   {
-		Box2D.destroy(carVerts[j]);
+		//Box2D.Destroy(carVerts[j]);
 	   }
 	 body=new b2BodyDef();
 	 body.set_type(b2_dynamicBody);
@@ -93,7 +93,7 @@ embox2dTest_joints.prototype.setup = function() {
 	 shape.SetAsBox(0.125/2,0.25,new b2Vec2(0,1.25),0);
 	 carbody.CreateFixture(shape,1);
 	}
-	
+	 //console.log('going');
 	 //setting up gunbody
 	{
 	 gun=new b2BodyDef();
@@ -130,6 +130,7 @@ embox2dTest_joints.prototype.setup = function() {
 	 
 	}
 	//setting up prismatic joint
+		
 	{
 	 var prismatic=new b2PrismaticJointDef();
 	 prismatic.Initialize(carbody,gunbody,gunbody.GetPosition(),new b2Vec2(0,1));
@@ -142,7 +143,7 @@ embox2dTest_joints.prototype.setup = function() {
 	 prismaticJoint= Box2D.castObject(world.CreateJoint(prismatic),b2PrismaticJoint);
 	}
 	//setting up wheeljoints
-	
+
 	{
 	 var frontWheelJoint=new b2WheelJointDef();
 	 frontWheelJoint.Initialize(carbody,wheelbody2,wheelbody2.GetPosition(),new b2Vec2(0,1));
@@ -166,6 +167,7 @@ embox2dTest_joints.prototype.setup = function() {
 embox2dTest_joints.prototype.step = function() {
     //this function will be called at the beginning of every time step
 	var futurepos=new b2Vec2(getWorldPointFromPixelPoint(viewCenterPixel).x+x,7.5);
+	//console.log(wheelbody1.GetPosition().get_x());
 	
 }
 	
@@ -258,7 +260,7 @@ embox2dTest_joints.prototype.onClick=function(){
 	bulletBody.ApplyLinearImpulse(new b2Vec2(100*direction.get_x(),100*direction.get_y()),bulletBody.GetWorldCenter());
    }
    embox2dTest_joints.prototype.addContactListener=function(){
-        console.log('entered');
+        //console.log('entered');
 		var listener=new b2ContactListener();
 		console.log(listener)
 		Box2D.customizeVTable(listener,[{
@@ -313,4 +315,7 @@ embox2dTest_joints.prototype.onClick=function(){
        }
 	   
 	}
-	
+	Box2D.b2Body.prototype.userData={
+								 color : 'blue',
+								 userDrawn : false
+								}

@@ -75,9 +75,27 @@ function createPolygonShape(vertices) {
     }            
     var ptr_wrapped = Box2D.wrapPointer(buffer, Box2D.b2Vec2);
     shape.Set(ptr_wrapped, vertices.length);
+	for (var i in vertices){
+		Box2D.destroy(vertices[i]);
+		}
     return shape;
 }
-
+ function createEdgeShape(vertices){
+	var shape=new b2EdgeShape();
+	var buffer=Box2D.allocate(vertices.length * 8,'float',Box2D.ALLOC_STACK);
+	var offset =0;
+	for (var i=0;i<vertices.legth;i++){
+		Box2D.setValue(buffer+(offset),vertices[i].get_x(),'float');
+		Box2D.setValue(buffer+(offset+4),vertices[i].get_y(),'float');
+		offset+=8;
+	}
+	var ptr_wrapped =Box2D.wrapPointer(buffer,Box2D.b2Vec2);
+	shape.Set(ptr_wrapped,vertices.length);
+	for(var i in vertices){
+		//Box2D.destroy(vertices[i]);
+		}
+	return shape;
+	}
 function createRandomPolygonShape(radius) {
     var numVerts = 3.5 + Math.random() * 5;
     numVerts = numVerts | 0;
@@ -88,3 +106,26 @@ function createRandomPolygonShape(radius) {
     }            
     return createPolygonShape(verts);
 }
+
+function getPosition(vert1,vert2) {
+	var position = new b2Vec2(0,0);
+	position.set_x(0.5 *(vert1.get_x()+vert2.get_x()));
+	position.set_y(0.5 *(vert1.get_y()+vert2.get_y()));
+	//Box2D.destroy(position);
+	//console.log('x : '+position.get_x() + 'y :' +position.get_y());
+	return position;
+	}
+	
+function getDistance(vert1,vert2){
+	var resultantVector= new b2Vec2(vert2.get_x()-vert1.get_x(),vert2.get_y()-vert1.get_y());
+	var distance = resultantVector.Length();
+	Box2D.destroy(resultantVector);
+	return distance;
+	}
+
+function getAngle(vert1,vert2){
+	var resultantVector = new b2Vec2(vert2.get_x()-vert1.get_x(),vert2.get_y()-vert1.get_y());
+	var angle = Math.atan2(resultantVector.get_y(),resultantVector.get_x());
+	Box2D.destroy(resultantVector);
+	return angle;
+	}

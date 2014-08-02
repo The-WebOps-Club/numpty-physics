@@ -119,6 +119,7 @@ function onMouseDown(canvas, evt) {
         startMouseJoint();
     mouseDown = true;
     updateStats();
+	
 }
 
 function onMouseUp(canvas, evt) {
@@ -345,22 +346,31 @@ function step(timestamp) {
 }
 
 function draw() {
-    
+    //console.log('drawing');
     //light background
-    context.fillStyle = 'rgb(0,10,0,)';
+    context.fillStyle = 'rgb(0,0,0)';
     context.fillRect( 0, 0, canvas.width, canvas.height );
     
-    context.save();            
+    context.save(); 
+        context.setTransform(1,0,0,1,0,0);	
         context.translate(canvasOffset.x, canvasOffset.y);
-        context.scale(1,-1);                
-        context.scale(PTM,PTM);
+        //context.scale(1,-1);                
+        context.scale(PTM,-PTM);
         context.lineWidth /= PTM;
-        //drawSprites();
         //drawAxes(context);
-        
+        if(verticesList.length !== 0 ){
+		    //console.log('length : ' + verticesList.length);
+			initialDraw(verticesList,context);
+		}
+		/*if(verticesList.length ==0){
+			//console.log('length : ' + verticesList.length);
+			}*/
         context.fillStyle = 'rgb(255,255,0)';
-        world.DrawDebugData();
-        
+        //world.DrawDebugData();
+		context.restore();
+		//console.log('entered here');
+        canvasdraw(context);
+		//console.log('exited here');
         if ( mouseJoint != null ) {
             //mouse joint is not drawn with regular joints in debug draw
             var p1 = mouseJoint.GetAnchorB();
@@ -372,7 +382,6 @@ function draw() {
             context.stroke();
         }
         
-    context.restore();
 }
 
 function updateStats() {
@@ -403,6 +412,7 @@ window.requestAnimFrame = (function(){
 })();
 
 function animate() {
+//console.log('animating');
     if ( run )
         requestAnimationFrame( animate );
     step();

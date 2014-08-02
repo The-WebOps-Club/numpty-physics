@@ -29,7 +29,8 @@ function drawSegment(vert1, vert2) {
     context.beginPath();
     context.moveTo(vert1V.get_x(),vert1V.get_y());
     context.lineTo(vert2V.get_x(),vert2V.get_y());
-	context.strokeStyle="green";
+	context.strokeStyle="white";
+	context.lineWidth= 1/30;
 	//console.log('entered');
     context.stroke();
 	context.restore();
@@ -115,7 +116,8 @@ function getCanvasDebugDraw() {
     original: Box2D.b2Draw.prototype.DrawSegment,
     replacement:
         function(ths, vert1, vert2, color) {                    
-            //setColorFromDebugDrawCallback(color);                               
+            //setColorFromDebugDrawCallback(color); 
+			//console.log('entered');			
 		   drawSegment(vert1, vert2);
         }
     }]);
@@ -145,7 +147,7 @@ function getCanvasDebugDraw() {
         function(ths, center, radius, color) {                    
             //setColorFromDebugDrawCallback(color);
             var dummyAxis = b2Vec2(0,0);
-            drawCircle(center, radius, dummyAxis, false);
+            //drawCircle(center, radius, dummyAxis, false);
         }
     }]);
     
@@ -154,8 +156,9 @@ function getCanvasDebugDraw() {
     replacement:
         function(ths, center, radius, axis, color) {                    
             //setColorFromDebugDrawCallback(color);
-			pointer=Box2D.wrapPointer(ths,b2Body);
-			//console.log(pointer.GetPosition().get_x());
+			//pointer=Box2D.wrapPointer(ths,b2Draw);
+			//object=Box2D.castObject(pointer,b2Body);
+			//console.log(pointer);
 			//console.log("angle : "+a.GetAngle()+";x :"+a.GetPosition().get_x()+";y : "+a.GetPosition().get_y()+"type : "+a.GetType());
 			//console.log(a.GetUserData());
             drawCircle(center, radius, axis, true);

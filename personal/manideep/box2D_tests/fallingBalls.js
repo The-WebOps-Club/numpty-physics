@@ -23,6 +23,7 @@ embox2dTest_fallingBalls.prototype.setup = function() {
 		fixture.set_restitution(1/Math.sqrt(2));
 		fixture.set_density(10);
 	ground.CreateFixture(fixture);
+	console.log(ground.GetFixtureList().GetShape());
 	canvas.onclick=function(){
 		worldX=mousePosWorld.x;
 		worldY=mousePosWorld.y;	
@@ -31,7 +32,7 @@ embox2dTest_fallingBalls.prototype.setup = function() {
 			ball.set_position(new b2Vec2(worldX,worldY));
 			ball.set_angle(0.0);
 		 fallingBall=world.CreateBody(ball);
-		 //console.log(canvas);
+		 console.log(fallingBall.GetFixtureList());
 		shape = new b2CircleShape();
 			shape.set_m_radius(1);
 		fixture=new b2FixtureDef();

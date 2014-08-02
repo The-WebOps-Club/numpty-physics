@@ -8,19 +8,22 @@
         <script type="text/javascript" src="embox2d-html5canvas-testbed.js"></script>
         <script type="text/javascript" src="fallingBalls.js"></script>
         <script type="text/javascript" src="car.js"></script>
-		<!--<script type='text/javascript' src='sliders.js'></script>-->
-		
+		<!--<script type="text/javascript" src="drawing.js"></script>-->
+		<script type="text/javascript" src="draw.js"></script>
+		<script type="text/javascript" src ="crayonPhysics.js"></script>
         <script type="text/javascript">
 		//console.log(canvas)
 		 Module.TOTAL_MEMORY =256*1024*1024;
             window.onload = function() {
+				img = new Image();
+				img.src ='sprites/wheel.jpg';
                 using(Box2D, "b2.+")
                 init();
                 changeTest();
                 animate();
             };        
         </script>
-        
+      
     </head>
     <body>
         <div style='text-align:center'>
@@ -49,10 +52,15 @@
                     Hold down Shift while moving the mouse to pan (Keyboard: arrow keys)<br>
                     You need to click on the canvas before using the keyboard.<br>
                     <br>
-                    Test: <select id="testSelection" onchange="changeTest();">
-					    <option value="embox2dTest_joints">joints</option>
+                    Test: <select id="testSelection" onchange="changeTest()">
+						<option value="embox2dTest_crayonPhysics">crayonPhysics</option>
+						<option value="embox2dTest_joints">joints</option>
+						<option value="embox2dTest_drawing">drawing</option>		  
+					    
+						
 						<option value="embox2dTest_fallingBalls">fallingBalls</option>
-                        						
+						<!--<option value="embox2dTest_crayonPhysics">crayonPhysics</option>-->
+                        <!--<option value="embox2dTest_drawing">drawing</option>-->						
                     </select>
                 </div>
                 <br>
