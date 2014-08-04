@@ -1,5 +1,6 @@
 var verticesList=[];
 var lining = null;
+var circleShape=new Box2D.b2CircleShape();
 var embox2dTest_crayonPhysics = function() {
     //constructor
 }
@@ -31,8 +32,22 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 	ground.CreateFixture(shape,1.0);
 	
 	}
+	body.set_type(b2_dynamicBody);
+	body.set_position(new b2Vec2(-15,1));
+	circleShape.set_m_radius(1);
+	ballBody =world.CreateBody(body);
+	ballBody.CreateFixture(circleShape,0.01);
+	ballBody.userData.color = 'yellow';
+	ballBody.userData.id = 'ball';
+	body.set_type(b2_dynamicBody);
+	body.set_position(new b2Vec2(17,-7.5));
+	circleShape.set_m_radius(0.5);
+	ballBody = world.CreateBody(body);
+	ballBody.userData.color = 'orange';
+	ballBody.userData.id = 'star';
+	ballBody.CreateFixture(circleShape,0.005);
 	
-	
+	currentTest.setContactListener();
 	canvas.onmousedown=function()
 				{ 
 				  console.log('mousedown');
@@ -50,9 +65,9 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 					  var y=event.pageY-canvas.offsetTop;
 					  verticesList.push({ x : mousePosWorld.x, y : mousePosWorld.y});
 					  count = 0;
-					  if(count%10==0){
+					 /*if(count%10==0){
 						edgeshape.push(new b2Vec2(mousePosWorld.x,mousePosWorld.y));
-						}
+						//}*/
 						count++;
 					}
 					context.restore();
@@ -63,10 +78,11 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 				//context.restore();
 				console.log('mouseup');
 			   //console.log('mouseup');
-			   /*for(var count =0;count < verticesList.length/10;count = count +10){
+			   for(var count =0;count < verticesList.length;count = count +1){
+					console.log('count :'+ count);
 					edgeshape.push(new b2Vec2(verticesList[count].x,verticesList[count].y));
-				}*/
-			  if(edgeshape.length > 1){
+				}
+			  if(edgeshape.length > 10){
 			  //console.log(1);
 				bodycreated=world.CreateBody(body);
 				console.log('x : ' + bodycreated.GetPosition().get_x(),'y : ' +bodycreated.GetPosition().get_y());
@@ -84,6 +100,7 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 			  
 				bodycreated.userData.verticesList = verticesList;
 				bodycreated.userData.userDrawn = true;
+				bodycreated.userData.group = 'drawn';
 				//console.log(verticesList.length);
 				verticesList=[];
 			   
@@ -95,5 +112,29 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 embox2dTest_crayonPhysics.prototype.step = function() {
     //this function will be called at the beginning of every time step
 }
+
+embox2dTest_crayonPhysics.prototype.setContactListener = function(){
+	myContactListener = new b2ContactListener();
+	Box2D.customizeVTable(myContactListener,[{
+		original : Box2D.b2ContactListener.prototype.EndContact,
+		replacement : function(thsPtr,contactPtr){
+							var contact = Box2D.wrapPointer(contactPtr,b2Contact);
+							 body1 = contact.GetFixtureA().GetBody();
+							 body2 = contact.GetFixtureB().GetBody();
+							console.log('listener');
+							if(body1.userData.id == 'ball' && body2.userData.id == 'star'){
+								world.DestroyBody(body2);
+								body2 == null;
+								}
+							else if(body1.userData.id == 'star' && body2.userData.id == 'ball'){
+								world.DestroyBody(body1);
+								body1 ==null;
+								}
+			          }
+			}])
+		world.SetContactListener(myContactListener);
+		}
+							
+	
 
 

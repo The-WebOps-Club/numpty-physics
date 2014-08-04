@@ -5,8 +5,11 @@ function canvasdraw(ctx){
 	var prev_bodyPointer = null;
 	var next_bodyPointer = worldBody.a;
 	var prev_fixturePointer , next_fixturePointer, fixtureList , shape, shapeType ;
-	while(prev_bodyPointer !== next_bodyPointer){
-		/*if(worldBody.userData.userDrawn){
+	while(prev_bodyPointer != next_bodyPointer){
+	    
+		/*if(worldBody.userData.verticesList){
+		    console.log(worldBody.userData.userDrawn);
+		    console.log(worldBody.a);
 		    fixtureList=worldBody.GetFixtureList();
 			//if(fixtureList.a !==0){
 		    shape=fixtureList.GetShape();
@@ -16,7 +19,8 @@ function canvasdraw(ctx){
 			  }
 			//}
 		}
-		else*/{
+		else*/ 
+		{
 			fixtureList = worldBody.GetFixtureList();
 			next_fixturePointer = fixtureList.a;
 				while (prev_fixturePointer !== next_fixturePointer){
@@ -37,7 +41,8 @@ function canvasdraw(ctx){
 					}
 				else
 					ctx.restore();
-				 //ctx.restore();
+				 
+
 				 fixtureList=fixtureList.GetNext();	
 				 prev_fixturePointer = next_fixturePointer;
 				 next_fixturePointer = fixtureList.a;
@@ -108,7 +113,7 @@ function drawCircleShape(fixture,ctx){
 		ctx.beginPath();
 		ctx.arc(x_coord,y_coord,radius,0,2*Math.PI,false);
 		ctx.strokeStyle = 'green';
-		ctx.fillStyle = 'blue';
+		ctx.fillStyle = fixture.GetBody().userData.color;
 		ctx.fill();
 		ctx.stroke();
 		//ctx.drawImage(img,40,x_coord-radius,y_coord-radius,2*radius,2*radius);

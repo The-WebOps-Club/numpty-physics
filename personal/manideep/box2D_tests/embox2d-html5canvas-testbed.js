@@ -348,9 +348,9 @@ function step(timestamp) {
 function draw() {
     //console.log('drawing');
     //light background
-    context.fillStyle = 'rgb(0,0,0)';
-    context.fillRect( 0, 0, canvas.width, canvas.height );
-    
+    //context.fillStyle = 'rgb(0,0,0)';
+    //context.fillRect( 0, 0, canvas.width, canvas.height );
+    context.drawImage(img,0,0,canvas.width,canvas.height);
     context.save(); 
         context.setTransform(1,0,0,1,0,0);	
         context.translate(canvasOffset.x, canvasOffset.y);
