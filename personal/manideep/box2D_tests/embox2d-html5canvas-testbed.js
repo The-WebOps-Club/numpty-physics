@@ -350,9 +350,10 @@ function draw() {
     //light background
     //context.fillStyle = 'rgb(0,0,0)';
     //context.fillRect( 0, 0, canvas.width, canvas.height );
-    context.drawImage(img,0,0,canvas.width,canvas.height);
+    
     context.save(); 
-        context.setTransform(1,0,0,1,0,0);	
+        context.setTransform(1,0,0,1,0,0);
+        context.drawImage(img,0,0,canvas.width,canvas.height);		
         context.translate(canvasOffset.x, canvasOffset.y);
         //context.scale(1,-1);                
         context.scale(PTM,-PTM);

@@ -1,11 +1,9 @@
 function canvasdraw(ctx){
 	var  worldBody=null;
     worldBody=world.GetBodyList();
-	var i =0;
-	var prev_bodyPointer = null;
-	var next_bodyPointer = worldBody.a;
-	var prev_fixturePointer , next_fixturePointer, fixtureList , shape, shapeType ;
-	while(prev_bodyPointer != next_bodyPointer){
+	
+	var  fixtureList , shape, shapeType ;
+	while(worldBody.a !== 0){
 	    
 		/*if(worldBody.userData.verticesList){
 		    console.log(worldBody.userData.userDrawn);
@@ -23,35 +21,33 @@ function canvasdraw(ctx){
 		{
 			fixtureList = worldBody.GetFixtureList();
 			next_fixturePointer = fixtureList.a;
-				while (prev_fixturePointer !== next_fixturePointer){
+				while (fixtureList.a !== 0){
 				shape =fixtureList.GetShape();
 				shapeType = shape.GetType();
 				ctx.save();
 				ctx.setTransform(1,0,0,1,0,0);
 				ctx.translate(canvasOffset.x,canvasOffset.y);
-				ctx.scale(1,-1);
+				ctx.scale(1,-1);						 
 				if(shapeType == 0){
-				//console.log('circle');
 					drawCircleShape(fixtureList,ctx);
+					ctx.restore();
+					}
+				else if (shapeType == 1){
+					drawEdgeShape();
+					ctx.restore();
 					}
 				else if(shapeType ==2){
-					//console.log(fixtureList.GetShape());
 					drawPolygonShape(fixtureList,ctx);
-					//console.log('rectangle');
+					ctx.restore();
 					}
 				else
 					ctx.restore();
 				 
 
 				 fixtureList=fixtureList.GetNext();	
-				 prev_fixturePointer = next_fixturePointer;
-				 next_fixturePointer = fixtureList.a;
 				}
 		}		
 		worldBody=worldBody.GetNext();
-		prev_bodyPointer =next_bodyPointer;
-		next_bodyPointer=worldBody.a;
-		i++;
    }
 }   
 function drawChainPolygonShape(worldBody,ctx){
@@ -81,7 +77,6 @@ function drawChainPolygonShape(worldBody,ctx){
 			ctx.lineWidth = 3;
 			ctx.strokeStyle= 'blue';
 	ctx.stroke();
-	ctx.restore();
 	}
 	
 function initialDraw(verticesList,ctx){
@@ -105,9 +100,9 @@ function initialDraw(verticesList,ctx){
 	}
 function drawCircleShape(fixture,ctx){
 		var pos=fixture.GetBody().GetPosition();
-		var x_coord = pos.get_x()*30;
-		var y_coord = pos.get_y()*30;
-		var radius =30*fixture.GetShape().get_m_radius();
+		var x_coord = pos.get_x()*PTM;
+		var y_coord = pos.get_y()*PTM;
+		var radius =PTM*fixture.GetShape().get_m_radius();
 		//ctx.save();
 		//ctx.translate(x_coord,y_coord);
 		ctx.beginPath();
@@ -117,15 +112,24 @@ function drawCircleShape(fixture,ctx){
 		ctx.fill();
 		ctx.stroke();
 		//ctx.drawImage(img,40,x_coord-radius,y_coord-radius,2*radius,2*radius);
-		ctx.restore();
 		}
+		
+function drawEdgeShape(fixture,ctx){
+	var pos=fixture.GetBody().GetPosition();
+	var angle = fixture.GetBody().GetAngle();
+    var x_coord = pos.get_x()*PTM;
+	var y_coord = pos.get_y()*PTM; 
+	ctx.translate(x_coord,y_coord);
+	ctx.rotate(angle);
+	var shape = Box2D.castObject(fixture.GetShape(),b2EdgeShape);
+	}
 function drawPolygonShape(fixture,ctx){
 	
 	var pos = fixture.GetBody().GetPosition();
 	var angle = fixture.GetBody().GetAngle();
 	//ctx.save();
-	var x_coord = pos.get_x()*30;
-	var y_coord = pos.get_y()*30;
+	var x_coord = pos.get_x()*PTM;
+	var y_coord = pos.get_y()*PTM;
 	//console.log('x : ' +x_coord +' ,y : ' +y_coord);
 	ctx.translate(x_coord,y_coord);
 	//ctx.beginPath();
@@ -136,8 +140,8 @@ function drawPolygonShape(fixture,ctx){
 	for(var vertexCount =0;vertexCount<shape.GetVertexCount();vertexCount++)
 		{
 		 var vertex = shape.GetVertex(vertexCount);
-		 x_coord = vertex.get_x()* 30;
-		 y_coord = vertex.get_y()* 30;
+		 x_coord = vertex.get_x()* PTM;
+		 y_coord = vertex.get_y()* PTM;
 		 if(vertexCount == 0){
 			ctx.beginPath();
 			ctx.moveTo(x_coord,y_coord);

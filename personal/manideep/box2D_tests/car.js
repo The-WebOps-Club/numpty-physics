@@ -315,7 +315,7 @@ embox2dTest_joints.prototype.onClick=function(){
        }
 	   
 	}
-	Box2D.b2Body.prototype.userData={
+	/*Box2D.b2Body.prototype.userData={
 								 color : 'blue',
 								 userDrawn : false
-								}
+								}*/
