@@ -60,6 +60,7 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 				  verticesList=[];
                }	
 	canvas.onmousemove=function(){
+	//console.log('entered');
 					context.save();
 					context.setTransform(1,0,0,1,0,0);
 					if(lining){
@@ -86,7 +87,7 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 			  if(edgeshape.length > 10){
 				bodycreated=world.CreateBody(body);
 				bodycreated.userData = {};
-				console.log('x : ' + bodycreated.GetPosition().get_x(),'y : ' +bodycreated.GetPosition().get_y());
+				//console.log('x : ' + bodycreated.GetPosition().get_x(),'y : ' +bodycreated.GetPosition().get_y());
 				for(var fixtureCount = 0;fixtureCount<edgeshape.length-1;fixtureCount++)
 					{
 					var width = 0.5*getDistance(edgeshape[fixtureCount],edgeshape[fixtureCount+1]);

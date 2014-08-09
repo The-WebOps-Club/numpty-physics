@@ -71,65 +71,24 @@ function setViewCenterWorld(b2vecpos, instantaneous) {
 function onMouseMove(canvas, evt) {
     prevMousePosPixel = mousePosPixel;
     updateMousePos(canvas, evt);
-    updateStats();
     if ( shiftDown ) {
         canvasOffset.x += (mousePosPixel.x - prevMousePosPixel.x);
         canvasOffset.y -= (mousePosPixel.y - prevMousePosPixel.y);
         draw();
     }
-    else if ( mouseDown && mouseJoint != null ) {
-        mouseJoint.SetTarget( new b2Vec2(mousePosWorld.x, mousePosWorld.y) );
-    }
 }
 
-function startMouseJoint() {
-    
-    if ( mouseJoint != null )
-        return;
-    
-    // Make a small box.
-    var aabb = new b2AABB();
-    var d = 0.001;            
-    aabb.set_lowerBound(new b2Vec2(mousePosWorld.x - d, mousePosWorld.y - d));
-    aabb.set_upperBound(new b2Vec2(mousePosWorld.x + d, mousePosWorld.y + d));
-    
-    // Query the world for overlapping shapes.            
-    myQueryCallback.m_fixture = null;
-    myQueryCallback.m_point = new b2Vec2(mousePosWorld.x, mousePosWorld.y);
-    world.QueryAABB(myQueryCallback, aabb);
-    
-    if (myQueryCallback.m_fixture)
-    {
-        var body = myQueryCallback.m_fixture.GetBody();
-        var md = new b2MouseJointDef();
-        md.set_bodyA(mouseJointGroundBody);
-        md.set_bodyB(body);
-        md.set_target( new b2Vec2(mousePosWorld.x, mousePosWorld.y) );
-        md.set_maxForce( 1000 * body.GetMass() );
-        md.set_collideConnected(true);
-        
-        mouseJoint = Box2D.castObject( world.CreateJoint(md), b2MouseJoint );
-        body.SetAwake(true);
-    }
-}
 
-function onMouseDown(canvas, evt) {            
+function onMouseDown(canvas, evt) {  
+   // console.log('mouse down 2');          
     updateMousePos(canvas, evt);
-    if ( !mouseDown )
-        startMouseJoint();
     mouseDown = true;
-    updateStats();
 	
 }
 
 function onMouseUp(canvas, evt) {
     mouseDown = false;
     updateMousePos(canvas, evt);
-    updateStats();
-    if ( mouseJoint != null ) {
-        world.DestroyJoint(mouseJoint);
-        mouseJoint = null;
-    }
 }
 
 function onMouseOut(canvas, evt) {
@@ -202,40 +161,6 @@ function zoomOut() {
     draw();
 }
         
-function updateDebugDrawCheckboxesFromWorld() {
-    var flags = myDebugDraw.GetFlags();
-    document.getElementById('drawShapesCheck').checked = (( flags & e_shapeBit ) != 0);
-    document.getElementById('drawJointsCheck').checked = (( flags & e_jointBit ) != 0);
-    document.getElementById('drawAABBsCheck').checked = (( flags & e_aabbBit ) != 0);
-    //document.getElementById('drawPairsCheck').checked = (( flags & e_pairBit ) != 0);
-    document.getElementById('drawTransformsCheck').checked = (( flags & e_centerOfMassBit ) != 0);
-}
-
-function updateWorldFromDebugDrawCheckboxes() {
-    var flags = 0;
-    if ( document.getElementById('drawShapesCheck').checked )
-        flags |= e_shapeBit;
-    if ( document.getElementById('drawJointsCheck').checked )
-        flags |= e_jointBit;
-    if ( document.getElementById('drawAABBsCheck').checked )
-        flags |= e_aabbBit;
-    /*if ( document.getElementById('drawPairsCheck').checked )
-        flags |= e_pairBit;*/
-    if ( document.getElementById('drawTransformsCheck').checked )
-        flags |= e_centerOfMassBit;
-    myDebugDraw.SetFlags( flags );
-}
-
-function updateContinuousRefreshStatus() {
-    showStats = ( document.getElementById('showStatsCheck').checked );
-    if ( !showStats ) {
-        var fbSpan = document.getElementById('feedbackSpan');
-        fbSpan.innerHTML = "";
-    }
-    else
-        updateStats();
-}
-
 function init() {
     
     canvas = document.getElementById("canvas");
@@ -266,26 +191,7 @@ function init() {
     canvas.addEventListener('keyup', function(evt) {
         onKeyUp(canvas,evt);
     }, false);
-    
-    myDebugDraw = getCanvasDebugDraw();            
-    myDebugDraw.SetFlags(e_shapeBit);
-    
-    myQueryCallback = new b2QueryCallback();
-    
-    Box2D.customizeVTable(myQueryCallback, [{
-    original: Box2D.b2QueryCallback.prototype.ReportFixture,
-    replacement:
-        function(thsPtr, fixturePtr) {
-            var ths = Box2D.wrapPointer( thsPtr, b2QueryCallback );
-            var fixture = Box2D.wrapPointer( fixturePtr, b2Fixture );
-            if ( fixture.GetBody().GetType() != Box2D.b2_dynamicBody ) //mouse cannot drag static bodies around
-                return true;
-            if ( ! fixture.TestPoint( ths.m_point ) )
-                return true;
-            ths.m_fixture = fixture;
-            return false;
-        }
-    }]);
+	
 }
 
 function changeTest() {    
@@ -294,18 +200,19 @@ function changeTest() {
 	   {
         currentTest.setNiceViewCenter();
 	   }
-    updateDebugDrawCheckboxesFromWorld();
     draw();
 }
 
 function createWorld() {
-    
+    myDebugDraw = getCanvasDebugDraw();
+myDebugDraw.SetFlags(e_shapeBit);
     if ( world != null ) 
         Box2D.destroy(world);
         
     world = new b2World( new b2Vec2(0.0, -10.0) );
+	
     world.SetDebugDraw(myDebugDraw);
-    
+   
     mouseJointGroundBody = world.CreateBody( new b2BodyDef() );
     
     var e = document.getElementById("testSelection");
@@ -338,67 +245,25 @@ function step(timestamp) {
     frameTime60 = frameTime60 * (59/60) + frametime * (1/60);
     
     draw();
-    statusUpdateCounter++;
-    if ( statusUpdateCounter > 20 ) {
-        updateStats();
-        statusUpdateCounter = 0;
     }
-}
 
-function draw() {
-    //console.log('drawing');
-    //light background
-    //context.fillStyle = 'rgb(0,0,0)';
-    //context.fillRect( 0, 0, canvas.width, canvas.height );
-    
+
+function draw() {   
     context.save(); 
         context.setTransform(1,0,0,1,0,0);
         context.drawImage(img,0,0,canvas.width,canvas.height);		
-        context.translate(canvasOffset.x, canvasOffset.y);
-        //context.scale(1,-1);                
+        context.translate(canvasOffset.x, canvasOffset.y);                
         context.scale(PTM,-PTM);
         context.lineWidth /= PTM;
-        //drawAxes(context);
+      
         if(verticesList.length !== 0 ){
-		    //console.log('length : ' + verticesList.length);
 			initialDraw(verticesList,context);
 		}
-		/*if(verticesList.length ==0){
-			//console.log('length : ' + verticesList.length);
-			}*/
         context.fillStyle = 'rgb(255,255,0)';
-        //world.DrawDebugData();
-		context.restore();
-		//console.log('entered here');
+		
+		world.DrawDebugData();
         canvasdraw(context);
-		//console.log('exited here');
-        if ( mouseJoint != null ) {
-            //mouse joint is not drawn with regular joints in debug draw
-            var p1 = mouseJoint.GetAnchorB();
-            var p2 = mouseJoint.GetTarget();
-            context.strokeStyle = 'rgb(204,204,204)';
-            context.beginPath();
-            context.moveTo(p1.get_x(),p1.get_y());
-            context.lineTo(p2.get_x(),p2.get_y());
-            context.stroke();
-        }
-        
-}
-
-function updateStats() {
-    if ( ! showStats )
-        return;
-    var currentViewCenterWorld = getWorldPointFromPixelPoint( viewCenterPixel );
-    var fbSpan = document.getElementById('feedbackSpan');
-    fbSpan.innerHTML =
-        "Status: "+(run?'running':'paused') +
-        "<br>Physics step time (average of last 60 steps): "+myRound(frameTime60,2)+"ms" +
-        //"<br>Mouse down: "+mouseDown +
-        "<br>PTM: "+myRound(PTM,2) +
-        "<br>View center: "+myRound(currentViewCenterWorld.x,3)+", "+myRound(currentViewCenterWorld.y,3) +
-        //"<br>Canvas offset: "+myRound(canvasOffset.x,0)+", "+myRound(canvasOffset.y,0) +
-        "<br>Mouse pos (pixel): "+mousePosPixel.x+", "+mousePosPixel.y +
-        "<br>Mouse pos (world): "+myRound(mousePosWorld.x,3)+", "+myRound(mousePosWorld.y,3);
+		context.restore();        
 }
 
 window.requestAnimFrame = (function(){
@@ -413,7 +278,6 @@ window.requestAnimFrame = (function(){
 })();
 
 function animate() {
-//console.log('animating');
     if ( run )
         requestAnimationFrame( animate );
     step();
@@ -423,5 +287,4 @@ function pause() {
     run = !run;
     if (run)
         animate();
-    updateStats();
 }
