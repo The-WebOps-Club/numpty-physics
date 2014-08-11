@@ -71,11 +71,6 @@ function setViewCenterWorld(b2vecpos, instantaneous) {
 function onMouseMove(canvas, evt) {
     prevMousePosPixel = mousePosPixel;
     updateMousePos(canvas, evt);
-    if ( shiftDown ) {
-        canvasOffset.x += (mousePosPixel.x - prevMousePosPixel.x);
-        canvasOffset.y -= (mousePosPixel.y - prevMousePosPixel.y);
-        draw();
-    }
 }
 
 
@@ -142,27 +137,10 @@ function onKeyUp(canvas, evt) {
     if ( currentTest && currentTest.onKeyUp )
         currentTest.onKeyUp(canvas, evt);
 }
-
-function zoomIn() {
-    var currentViewCenterWorld = getWorldPointFromPixelPoint( viewCenterPixel );
-    PTM *= 1.1;
-    var newViewCenterWorld = getWorldPointFromPixelPoint( viewCenterPixel );
-    canvasOffset.x += (newViewCenterWorld.x-currentViewCenterWorld.x) * PTM;
-    canvasOffset.y -= (newViewCenterWorld.y-currentViewCenterWorld.y) * PTM;
-    draw();
-}
-
-function zoomOut() {
-    var currentViewCenterWorld = getWorldPointFromPixelPoint( viewCenterPixel );
-    PTM /= 1.1;
-    var newViewCenterWorld = getWorldPointFromPixelPoint( viewCenterPixel );
-    canvasOffset.x += (newViewCenterWorld.x-currentViewCenterWorld.x) * PTM;
-    canvasOffset.y -= (newViewCenterWorld.y-currentViewCenterWorld.y) * PTM;
-    draw();
-}
-        
+ 
+//main start
+ 
 function init() {
-    
     canvas = document.getElementById("canvas");
     context = canvas.getContext( '2d' );
     canvasOffset.x = canvas.width/2;
@@ -204,22 +182,14 @@ function changeTest() {
 }
 
 function createWorld() {
-    myDebugDraw = getCanvasDebugDraw();
-myDebugDraw.SetFlags(e_shapeBit);
     if ( world != null ) 
         Box2D.destroy(world);
         
-    world = new b2World( new b2Vec2(0.0, -10.0) );
+    world = new b2World( new b2Vec2(0.0, -10.0) );//the latter number fixes gravity
 	
-    world.SetDebugDraw(myDebugDraw);
-   
     mouseJointGroundBody = world.CreateBody( new b2BodyDef() );
-    
-    var e = document.getElementById("testSelection");
-    var v = e.options[e.selectedIndex].value;
-    
-    eval( "currentTest = new "+v+"();" );
-    
+	
+    currentTest = new embox2dTest_crayonPhysics();
     currentTest.setup();
 }
 
