@@ -1,6 +1,10 @@
 var verticesList=[];
+var edgeshape =[];
 var lining = null;
 var circleShape=new Box2D.b2CircleShape();
+var fixture = new Box2D.b2FixtureDef();
+var body =new Box2D.b2BodyDef();
+var shape =  new Box2D.b2PolygonShape();
 var to_be_destroyed;
 var embox2dTest_crayonPhysics = function() {
     //constructor
@@ -16,21 +20,29 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
     //set up the Box2D scene here - the world is already created
 	vector = new b2Vec2(0,0);
     //setting static bodies
-    {	
-	var body = new b2BodyDef();
+    {
+    //fixture = new b2FixtureDef();
+    fixture.set_density(1);
+	fixture.set_restitution(0.5);
+	fixture.set_friction(0.3);	
+    //body = new b2BodyDef();
 	body.set_type(b2_staticBody);
 	body.set_position(new b2Vec2(0,0));
 	body.set_angle(0.0);
 	ground = world.CreateBody(body);
-	shape =  new b2PolygonShape();
+	
 	shape.SetAsBox(2.5,0.2,new b2Vec2(-15,0),0);
-	ground.CreateFixture(shape,1.0);
+	fixture.set_shape(shape);
+	ground.CreateFixture(fixture);
 	shape.SetAsBox(20,0.5,new b2Vec2(0,-10),0);
-	ground.CreateFixture(shape,1.0);
+	fixture.set_shape(shape);
+	ground.CreateFixture(fixture);
 	shape.SetAsBox(0.1,2,new b2Vec2(18,-8),0);
-	ground.CreateFixture(shape,1.0);
+	fixture.set_shape(shape);
+	ground.CreateFixture(fixture);
 	shape.SetAsBox(2,0.1,new b2Vec2(16,-6),0);
-	ground.CreateFixture(shape,1.0);
+	fixture.set_shape(shape);
+	ground.CreateFixture(fixture);
 	ground.userData = {};
 	
 	}
@@ -54,14 +66,10 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 	currentTest.setContactListener();
 	canvas.onmousedown=function()
 				{ 
-				  console.log('mousedown');
-				  lining = true;
-   				  edgeshape=[];
-				  verticesList=[];
+				  
                }	
 	canvas.onmousemove=function(){
-	//console.log('entered');
-					context.save();
+	//console.log('entered');context.save();
 					context.setTransform(1,0,0,1,0,0);
 					if(lining){
 					  body.set_position(new b2Vec2(0,0));
@@ -76,33 +84,10 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 						count++;
 					}
 					context.restore();
+					
 					}
 	canvas.onmouseup=function(){
-				lining = false;
-				//console.log('mouseup');
-			   for(var count =0;count < verticesList.length;count = count +1){
-					//console.log('count :'+ count);
-					edgeshape.push(new b2Vec2(verticesList[count].x,verticesList[count].y));
-				}
-			  if(edgeshape.length > 10){
-				bodycreated=world.CreateBody(body);
-				bodycreated.userData = {};
-				//console.log('x : ' + bodycreated.GetPosition().get_x(),'y : ' +bodycreated.GetPosition().get_y());
-				for(var fixtureCount = 0;fixtureCount<edgeshape.length-1;fixtureCount++)
-					{
-					var width = 0.5*getDistance(edgeshape[fixtureCount],edgeshape[fixtureCount+1]);
-					var height =0.025;
-					var position = getPosition(edgeshape[fixtureCount],edgeshape[fixtureCount+1]);
-					var angle =getAngle(edgeshape[fixtureCount],edgeshape[fixtureCount+1]);
-					shape.SetAsBox(width,height,position,angle);
-					 bodycreated.CreateFixture(shape,1.0);
-					}
-			  
-				bodycreated.userData.verticesList = verticesList;
-				//bodycreated.userData.userDrawn = true;
-				//bodycreated.userData.group = 'drawn';
-				verticesList=[];
-			  } 
+				
 	}
 	}
 
@@ -112,7 +97,9 @@ embox2dTest_crayonPhysics.prototype.step = function() {
 	if(to_be_destroyed){
 	    var body_reference = Box2D.wrapPointer(to_be_destroyed);
 		world.DestroyBody(body_reference);
+		//window.cancelAnimationFrame(requestId,5000);
 		body_reference == null;
+		context.globalAlpha =0.1;
 		}
 	to_be_destroyed = null;
 }

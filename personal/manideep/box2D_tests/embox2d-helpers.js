@@ -117,6 +117,7 @@ function getPosition(vert1,vert2) {
 	}
 	
 function getDistance(vert1,vert2){
+    //console.log(vert2);
 	var resultantVector= new b2Vec2(vert2.get_x()-vert1.get_x(),vert2.get_y()-vert1.get_y());
 	var distance = resultantVector.Length();
 	Box2D.destroy(resultantVector);

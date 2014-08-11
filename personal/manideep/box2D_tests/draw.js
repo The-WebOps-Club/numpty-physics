@@ -110,7 +110,6 @@ function drawCircleShape(fixture,ctx){
 		ctx.strokeStyle = 'green';
 		ctx.fillStyle = fixture.GetBody().userData.color;
 		ctx.fill();
-		ctx.stroke();
 		//ctx.drawImage(img,40,x_coord-radius,y_coord-radius,2*radius,2*radius);
 		}
 		

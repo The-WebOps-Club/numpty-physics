@@ -5,6 +5,7 @@ var world = null;
 var mouseJointGroundBody;
 var canvas;
 var context;
+var requestId = null;
 var myDebugDraw;        
 var myQueryCallback;
 var mouseJoint = null;        
@@ -80,7 +81,11 @@ function onMouseMove(canvas, evt) {
 
 
 function onMouseDown(canvas, evt) {  
-   // console.log('mouse down 2');          
+   // console.log('mouse down 2');
+    console.log('mousedown');
+				  lining = true;
+   				  edgeshape=[];
+				  verticesList=[];   
     updateMousePos(canvas, evt);
     mouseDown = true;
 	
@@ -89,6 +94,28 @@ function onMouseDown(canvas, evt) {
 function onMouseUp(canvas, evt) {
     mouseDown = false;
     updateMousePos(canvas, evt);
+	lining = false;
+			   for(var count =0;count < verticesList.length;count = count +1){
+					edgeshape.push(new b2Vec2(verticesList[count].x,verticesList[count].y));
+				}
+			  if(edgeshape.length >4){
+				bodycreated=world.CreateBody(body);
+				bodycreated.userData = {};
+				for(var fixtureCount = 0;fixtureCount<edgeshape.length-1;fixtureCount++)
+					{
+					var width = 0.5*getDistance(edgeshape[fixtureCount],edgeshape[fixtureCount+1]);
+					var height =0.025;
+					var position = getPosition(edgeshape[fixtureCount],edgeshape[fixtureCount+1]);
+					var angle =getAngle(edgeshape[fixtureCount],edgeshape[fixtureCount+1]);
+					shape.SetAsBox(width,height,position,angle);
+					 bodycreated.CreateFixture(shape,1.0);
+					}
+			  
+				bodycreated.userData.verticesList = verticesList;
+				//bodycreated.userData.userDrawn = true;
+				//bodycreated.userData.group = 'drawn';
+				verticesList=[];
+			  } 
 }
 
 function onMouseOut(canvas, evt) {
@@ -217,7 +244,7 @@ myDebugDraw.SetFlags(e_shapeBit);
     
     var e = document.getElementById("testSelection");
     var v = e.options[e.selectedIndex].value;
-    
+    console.log(v);
     eval( "currentTest = new "+v+"();" );
     
     currentTest.setup();
@@ -261,7 +288,7 @@ function draw() {
 		}
         context.fillStyle = 'rgb(255,255,0)';
 		
-		world.DrawDebugData();
+		//world.DrawDebugData();
         canvasdraw(context);
 		context.restore();        
 }
@@ -279,7 +306,7 @@ window.requestAnimFrame = (function(){
 
 function animate() {
     if ( run )
-        requestAnimationFrame( animate );
+        requestId = requestAnimationFrame( animate );
     step();
 }
 
