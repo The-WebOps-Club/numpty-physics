@@ -3,21 +3,7 @@
     worldBody=world.GetBodyList();
 	
 	var  fixtureList , shape, shapeType ;
-	while(worldBody.a !== 0){
-	    
-		/*if(worldBody.userData.verticesList){
-		    console.log(worldBody.userData.userDrawn);
-		    console.log(worldBody.a);
-		    fixtureList=worldBody.GetFixtureList();
-			//if(fixtureList.a !==0){
-		    shape=fixtureList.GetShape();
-		    shapeType=shape.GetType(); console.log('chain');			// 0 for circleshape ;1-edgeshape; 2- polygonshape ;
-			  if(shapeType == 2){
-				drawChainPolygonShape(worldBody,ctx);
-			  }
-			//}
-		}
-		else*/ 
+	while(worldBody.a !== 0){ 
 		{
 			fixtureList = worldBody.GetFixtureList();
 			next_fixturePointer = fixtureList.a;
@@ -110,7 +96,6 @@ function drawCircleShape(fixture,ctx){
 		ctx.strokeStyle = 'green';
 		ctx.fillStyle = fixture.GetBody().userData.color;
 		ctx.fill();
-		ctx.stroke();
 		//ctx.drawImage(img,40,x_coord-radius,y_coord-radius,2*radius,2*radius);
 		}
 		
@@ -151,7 +136,7 @@ function drawPolygonShape(fixture,ctx){
 		  }
 		 }
 		 ctx.strokeStyle = 'darkSalmon';
-		 ctx.fillStyle = 'pink';
+		 ctx.fillStyle = fixture.GetBody().userData.color;
 		 ctx.fill();
 		 ctx.restore();
 	}
