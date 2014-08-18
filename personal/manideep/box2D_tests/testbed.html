@@ -2,19 +2,42 @@
     <head>
         <title>Emscripten Box2D demo</title>
         
-        <script src='box2d.js'></script>
-        <script type="text/javascript" src="embox2d-helpers.js"></script>
-        <script type="text/javascript" src="embox2d-html5canvas-debugDraw.js"></script>
-        <script type="text/javascript" src="embox2d-html5canvas-testbed.js"></script>
-        <script type="text/javascript" src="fallingBalls.js"></script>
-        <script type="text/javascript" src="car.js"></script>
-		<!--<script type="text/javascript" src="drawing.js"></script>-->
+		<script src='box2d.js'></script>
+		<script type="text/javascript" src="embox2d-helpers.js"></script>
+		<script type="text/javascript" src="embox2d-html5canvas-testbed.js"></script>
 		<script type="text/javascript" src="draw.js"></script>
-		<script type="text/javascript" src ="crayonPhysics.js"></script>
-        <script type="text/javascript">
+		<script type="text/javascript" src="level1.js"></script>
+		<script type="text/javascript" src="level2.js"></script>
+		<script type="text/javascript" src="level3.js"></script>
+		<script type="text/javascript" src="jquery.min.js"></script>
+		<script type="text/javascript">
 		//console.log(canvas)
-		 Module.TOTAL_MEMORY =256*1024*1024;
+		 //Module.TOTAL_MEMORY =256*1024*1024;
             window.onload = function() {
+			    $("#start").click(function(){
+				$("#cover").fadeOut("fast");
+				//$("#transition").fadeOut("fast");
+				});
+				setInterval(function(){
+				$("#arrow").toggleClass("blink");
+				},1000);
+				$("#replay").click(function(){
+				    console.log("entered");
+					$("#transition").css('zIndex',-1);
+					resetScene();
+					});
+				$("#next").click(function(){
+				    console.log("entered");
+					level +=1;
+					$("#transition").css('zIndex',-1);
+					resetScene();
+					});
+				$("#previous").click(function(){
+				    console.log("entered");
+					$("#transition").css('zIndex',-1);
+					level -=1; 
+					resetScene();
+					});
 				img = new Image();
 				img.src ='sprites/paper.jpg';
                 using(Box2D, "b2.+")
@@ -24,65 +47,145 @@
             };        
         </script>
       
+	  <style>
+	  #cover{
+		display:block;
+		background-color:rgba(173,237,45,0.5);
+		position:absolute;
+		left:0;right:0;top:9px;
+		margin:auto;
+		width:1200px;
+		padding:2px;
+		text-align:center;
+		height:600;
+		font-family:Colored Crayons;font-size:500%;
+		}
+	  #start{
+	    margin:auto;
+		background-image:url('sprites/start2.png');
+		background-size: 288px 89px;
+		background-position:center;
+		background-repeat:no-repeat;
+		height:100px;
+		width:300px;
+		border: 2px solid;
+		border-color:#B1D000;
+		border-radius:15px;
+		background-color:rgba(200,255,50,0.5);
+		transition:0.5s;
+		}
+	  .glow:hover{
+	    background-color:transparent;
+		border: 2px solid;
+		border-color: #FEca00;
+		box-shadow: 0 0 20px #99ca00;
+		}
+	#transition{
+	    display:block;
+		margin :auto;
+		padding:2px;
+		left:0;right:0;top:9px;
+		background-color : rgba(173,237,45,0.5);
+		background-position:center;
+		background-repeat:no-repeat;
+		position : absolute;
+		width : 1200px;
+		height :600px;
+		}
+	#analysis{
+		display :block;
+		margin :auto;
+		padding :2px;
+		left : 300px;
+		top : 50px;
+		text-align :center;
+		width : 900px;
+		height : 200px;
+		font-size : 150;
+		}
+	#replay{ 
+		background-image :url('sprites/replay_trans.png');
+		left :500px;
+		top : 300px;
+		}
+	#next{
+		background-image : url('sprites/next.png');
+		left :800px;
+		top : 300px;
+		}
+	#previous{
+		background-image : url('sprites/previous.png');
+		left :150px;
+		top : 300px;
+		}
+	.button{
+		background-repeat :no-repeat;
+		display :block;
+		margin :auto;
+		width :200px;
+		height :90px;
+		position : absolute;
+		border:2px solid #Fe00F0;
+		border-radius : 15px;
+		}
+	  .blink{
+	    opacity:0 !important;
+	    }
+	  #arrow{
+	    background:url('sprites/arrow.png');
+		background-size:150px 50px;
+		background-repeat:no-repeat;
+		height:50px;
+		width:150px;
+		margin-left:63%;
+		margin-top:-70px;
+		transition:0.5s;
+	    }
+	  </style>
+	  
+	  
     </head>
     <body>
+	<div id="transition" style="z-index : -1">
+	<div id="analysis"></div>
+	<div id="replay" class ="glow button"></div>
+	<div id ="next" class="glow button"></div>
+	<div id="previous" class="glow button"></div>
+	</div>
+	<div id="cover">
+    	Welcome to<br> Numpty Physics
+    	<br><br>
+		<div id="start" class ="glow"></div><div id="arrow"></div>
+	</div>
+	
         <div style='text-align:center'>
-            <h2>Emscripten Box2D demo</h2>
-            This demo uses JavaScript generated from the Box2D C++ source code by the <a href="https://github.com/kripken/emscripten/wiki">emscripten</a> compiler.<br>
-            See <a href="https://github.com/kripken/box2d.js">https://github.com/kripken/box2d.js</a> for more details.<br>
-            <br>            
+                        
             <!--
                 If you change the size of the canvas, you'll also need to change 
                 the value of 'viewCenterPixel' in embox2d-html5canvas-testbed.js
             -->
             <div style="margin:auto;width:1200px;padding:2px;border:1px solid #888;text-align:left">            
             
-                <!--<canvas id="canvas" width="480" height="320" tabindex='1'></canvas>-->
-                <canvas id="canvas" width="1200" height="600" tabindex='1'style='background-color:rgba(0,0,10,1)'></canvas>
+                
+                <canvas id="canvas" width="1200" height="600" tabindex='1'style='background-color:rgba(0,0,10,1);'></canvas>
                 <div style="width:1196px;padding:2px;background-color:rgba(128,256,128,0.1)">
                 <div style="text-align:center">
                     <button id="reloadButton" onclick="resetScene();">Reset</button>
                     <button id="pauseButton" onclick="pause();">Pause</button>
                     <button id="stepButton" onclick="step();">Single step</button>
-                    (Keyboard: R, P, S)<br>
-                    Zoom
-                    <button id="zoomInButton" onclick="zoomIn();">+</button>
-                    <button id="zoomOutButton" onclick="zoomOut();">-</button>
-                    (Keyboard: X, Z)<br>
-                    Hold down Shift while moving the mouse to pan (Keyboard: arrow keys)<br>
-                    You need to click on the canvas before using the keyboard.<br>
-                    <br>
-                    Test: <select id="testSelection" onchange="changeTest()">
-						<option value="embox2dTest_crayonPhysics">crayonPhysics</option>
-						<option value="embox2dTest_joints">joints</option>
-						<option value="embox2dTest_drawing">drawing</option>		  
-					    
-						
-						<option value="embox2dTest_fallingBalls">fallingBalls</option>
-						<!--<option value="embox2dTest_crayonPhysics">crayonPhysics</option>-->
-                        <!--<option value="embox2dTest_drawing">drawing</option>-->						
-                    </select>
-                </div>
-                <br>
                     
-               <!-- Debug draw flags:<br>
-				<div>
-					<input id="drawShapesCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Shapes<br>
-					<input id="drawJointsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Joints<br>
-					<input id="drawAABBsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">AABBs<br>
-					<input id="drawPairsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Pairs<br>
-					<input id="drawTransformsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Transforms<br>
-				</div>-->
-                <br>
-              
-                <!--<input id="showStatsCheck" type="checkbox" onclick="updateContinuousRefreshStatus();">Show stats<br>-->
-				<!--<div style='left : 100px; top :200px'>
-					<span id="feedbackSpan"></span>
-				</div>
-                <br>-->
+                </div>
                 </div>
             </div>        
         </div>
+		<script>
+		/*$("#start").click(function(){
+			$("#cover").fadeOut("fast");
+		});
+		setInterval(function(){
+    	$("#arrow").toggleClass("blink");
+ 		},1000)*/
+	  </script>
     </body>
 </html>
 
