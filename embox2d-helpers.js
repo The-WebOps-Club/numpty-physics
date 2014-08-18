@@ -117,6 +117,7 @@ function getPosition(vert1,vert2) {
 	}
 	
 function getDistance(vert1,vert2){
+    //console.log(vert2);
 	var resultantVector= new b2Vec2(vert2.get_x()-vert1.get_x(),vert2.get_y()-vert1.get_y());
 	var distance = resultantVector.Length();
 	Box2D.destroy(resultantVector);
@@ -129,3 +130,37 @@ function getAngle(vert1,vert2){
 	Box2D.destroy(resultantVector);
 	return angle;
 	}
+	
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+var setContactListener = function(){
+console.log('entered');
+	myContactListener = new b2ContactListener();
+	Box2D.customizeVTable(myContactListener,[{
+		original : Box2D.b2ContactListener.prototype.BeginContact,
+		replacement : function(thsPtr,contactPtr){
+							var contact = Box2D.wrapPointer(contactPtr,b2Contact);
+							var body1 = contact.GetFixtureA().GetBody();
+							var body2 = contact.GetFixtureB().GetBody();
+							// console.log(body1.a +'   ' + body2.a);
+							//console.log('listener');
+							//console.log(' body1 ' + body1.userData.id +' body2 ' +body2.userData.id);
+							
+							if(body1.userData.id == 'ball' && body2.userData.id == 'star'){
+								to_be_destroyed = body2.a;
+								//console.log(to_be_destroyed);
+								}
+							else if(body1.userData.id == 'star' && body2.userData.id == 'ball'){
+								to_be_destroyed = body1.a;
+								}
+			          }
+			}])
+		world.SetContactListener(myContactListener);
+		}
