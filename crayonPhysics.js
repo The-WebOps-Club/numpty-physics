@@ -52,14 +52,14 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 	ballBody.CreateFixture(circleShape,0.005);
 	
 	currentTest.setContactListener();
-	canvas.onmousedown=function()
+			a=function(event)
 				{ 
 				  console.log('mousedown');
 				  lining = true;
    				  edgeshape=[];
 				  verticesList=[];
                }	
-	canvas.onmousemove=function(){
+			b=function(event){
 	//console.log('entered');
 					context.save();
 					context.setTransform(1,0,0,1,0,0);
@@ -77,7 +77,7 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 					}
 					context.restore();
 					}
-	canvas.onmouseup=function(){
+			c=function(event){
 				lining = false;
 				//console.log('mouseup');
 			   for(var count =0;count < verticesList.length;count = count +1){
@@ -105,6 +105,12 @@ embox2dTest_crayonPhysics.prototype.setup = function() {
 			  } 
 	}
 	}
+canvas.onmousedown=a;
+canvas.touchstart=a;
+canvas.onmousemove=b;
+canvas.touchmove=b;
+canvas.onmouseup=c;
+canvas.touchend=c;
 
 embox2dTest_crayonPhysics.prototype.step = function() {
     //this function will be called at the beginning of every time step
