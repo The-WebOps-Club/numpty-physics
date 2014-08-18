@@ -1,10 +1,18 @@
-
+var level= 1;
 var PTM = 30;
 //var fallingBall;
 var world = null;
+var verticesList=[];
+var list =[];
+var lining = null;
+var circleShape=new Box2D.b2CircleShape();
+var fixture = new Box2D.b2FixtureDef();
+var body =new Box2D.b2BodyDef();
+var shape =  new Box2D.b2PolygonShape();
 var mouseJointGroundBody;
 var canvas;
 var context;
+var requestId = null;
 var myDebugDraw;        
 var myQueryCallback;
 var mouseJoint = null;        
@@ -12,8 +20,7 @@ var run = true;
 var frameTime60 = 0;
 var statusUpdateCounter = 0;
 var showStats = false;        
-var mouseDown = false;
-var shiftDown = false;        
+var mouseDown = false;        
 var mousePosPixel = {
     x: 0,
     y: 0
@@ -71,11 +78,24 @@ function setViewCenterWorld(b2vecpos, instantaneous) {
 function onMouseMove(canvas, evt) {
     prevMousePosPixel = mousePosPixel;
     updateMousePos(canvas, evt);
+		//console.log('entered');
+	    context.save();
+		context.setTransform(1,0,0,1,0,0);
+		if(lining){
+			body.set_position(new b2Vec2(0,0));
+			body.set_type(b2_dynamicBody);
+			var x=event.pageX-canvas.offsetLeft;
+			var y=event.pageY-canvas.offsetTop;
+			verticesList.push({ x : mousePosWorld.x, y : mousePosWorld.y});
+					}
+					context.restore();           
 }
 
 
 function onMouseDown(canvas, evt) {  
-   // console.log('mouse down 2');          
+				  lining = true;
+   				  list=[];
+				  verticesList=[];   
     updateMousePos(canvas, evt);
     mouseDown = true;
 	
@@ -84,10 +104,33 @@ function onMouseDown(canvas, evt) {
 function onMouseUp(canvas, evt) {
     mouseDown = false;
     updateMousePos(canvas, evt);
+	lining = false;
+			   for(var count =0;count < verticesList.length;count = count +1){
+					list.push(new b2Vec2(verticesList[count].x,verticesList[count].y));
+				}
+			  if(list.length >4){
+				bodycreated=world.CreateBody(body);
+				bodycreated.userData = {};
+				for(var fixtureCount = 0;fixtureCount<list.length-1;fixtureCount++)
+					{
+					var width = 0.5*getDistance(list[fixtureCount],list[fixtureCount+1]);
+					var height =0.045;
+					var position = getPosition(list[fixtureCount],list[fixtureCount+1]);
+					var angle =getAngle(list[fixtureCount],list[fixtureCount+1]);
+					shape.SetAsBox(width,height,position,angle);
+					fixture.set_shape(shape);
+					 bodycreated.CreateFixture(fixture);
+					}
+			  
+				bodycreated.userData.verticesList = verticesList;
+				bodycreated.userData.color = getRandomColor();
+				verticesList=[];
+			  } 
 }
 
 function onMouseOut(canvas, evt) {
-    onMouseUp(canvas,evt);
+    mouseDown = false;
+    updateMousePos(canvas, evt);
 }
 
 function onKeyDown(canvas, evt) {
@@ -119,9 +162,6 @@ function onKeyDown(canvas, evt) {
     else if ( evt.keyCode == 40 ) {//down
         canvasOffset.y -= 32;
     }
-    else if ( evt.keyCode == 16 ) {//shift
-        shiftDown = true;
-    }
     
     if ( currentTest && currentTest.onKeyDown )
         currentTest.onKeyDown(canvas, evt);
@@ -130,9 +170,6 @@ function onKeyDown(canvas, evt) {
 }
 
 function onKeyUp(canvas, evt) {
-    if ( evt.keyCode == 16 ) {//shift
-        shiftDown = false;
-    }
     
     if ( currentTest && currentTest.onKeyUp )
         currentTest.onKeyUp(canvas, evt);
@@ -146,7 +183,7 @@ function init() {
     canvasOffset.x = canvas.width/2;
     canvasOffset.y = canvas.height/2;
     
-    canvas.addEventListener('mousemove', function(evt) {
+   /* canvas.addEventListener('mousemove', function(evt) {
         onMouseMove(canvas,evt);
     }, false);
     
@@ -156,12 +193,14 @@ function init() {
     
     canvas.addEventListener('mouseup', function(evt) {
         onMouseUp(canvas,evt);
-    }, false);
+    }, false);*/
     
     canvas.addEventListener('mouseout', function(evt) {
         onMouseOut(canvas,evt);
     }, false);
-    
+	$("canvas").bind("mousedown touchstart",function(evt){onMouseDown(canvas,evt);});
+    $("canvas").bind("mousemove touchmove",function(evt){onMouseMove(canvas,evt);});
+	$("canvas").bind("mouseup touchend",function(evt){onMouseUp(canvas,evt)});
     canvas.addEventListener('keydown', function(evt) {
         onKeyDown(canvas,evt);
     }, false);
@@ -188,8 +227,11 @@ function createWorld() {
     world = new b2World( new b2Vec2(0.0, -10.0) );//the latter number fixes gravity
 	
     mouseJointGroundBody = world.CreateBody( new b2BodyDef() );
-	
-    currentTest = new embox2dTest_crayonPhysics();
+    setContactListener();
+    var e = document.getElementById("testSelection");
+   // var v = e.options[e.selectedIndex].value;
+    eval( "currentTest = new embox2dTest_level"+level+"();" );
+   // currentTest = new embox2dTest_level3();
     currentTest.setup();
 }
 
@@ -231,7 +273,7 @@ function draw() {
 		}
         context.fillStyle = 'rgb(255,255,0)';
 		
-		world.DrawDebugData();
+		//world.DrawDebugData();
         canvasdraw(context);
 		context.restore();        
 }
@@ -249,7 +291,7 @@ window.requestAnimFrame = (function(){
 
 function animate() {
     if ( run )
-        requestAnimationFrame( animate );
+        requestId = window.requestAnimFrame( animate );
     step();
 }
 
