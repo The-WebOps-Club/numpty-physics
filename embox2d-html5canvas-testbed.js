@@ -84,8 +84,8 @@ function onMouseMove(canvas, evt) {
 		if(lining){
 			body.set_position(new b2Vec2(0,0));
 			body.set_type(b2_dynamicBody);
-			var x=event.pageX-canvas.offsetLeft;
-			var y=event.pageY-canvas.offsetTop;
+			var x=evt.pageX-canvas.offsetLeft;
+			var y=evt.pageY-canvas.offsetTop;
 			verticesList.push({ x : mousePosWorld.x, y : mousePosWorld.y});
 					}
 					context.restore();           
