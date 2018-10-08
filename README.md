@@ -3,7 +3,7 @@ numpty-physics
 
 ## Team Details
 
-* Manideep           -8682971372   -manideepabc@gmail.com
+* Manideep  -manideepabc@gmail.com
 * Karthikeya Viswanath - 8122219842 - viswanathkarthikeya@gmail.com
 * A V Susmitha         - 9703755629 - sush02a@gmail.com
 * Kunal Kishore		   - 9003291309 - kunalkishore.mail@gmail.com
